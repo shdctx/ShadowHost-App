@@ -1,10 +1,14 @@
-# ShadowHost
+<div align="center">
+<h1>ShadowHost</h1>
 
-![Status](https://img.shields.io/badge/Status-Beta-purple?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Beta-purple?style=for-the-badge)
+
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=for-the-badge)
-![Downloads](https://img.shields.io/github/downloads/ShadowFalcon24/ShadowHost-App/total?style=flat-square&color=white)
 
 **The modern command center for your local Minecraft Server.**
+</div>
+
+---
 
 ShadowHost removes the complexity of managing server `.bat` files and command lines, replacing them with a sleek, high-performance dashboard. Control your world with a single click.
 
