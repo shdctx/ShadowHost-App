@@ -78,7 +78,7 @@ jobs:
 
       # --- ARTIFACTS ---
       - name: Upload Test Builds
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: success() && (github.event.inputs.upload_artifacts == 'true' || github.event_name == 'pull_request')
         with:
           name: debug-build-${{ matrix.platform }}
