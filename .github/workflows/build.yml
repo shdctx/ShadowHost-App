@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.vscode/**'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test-tauri:
+    if: github.event.pull_request.draft == false
+    name: Test on ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # --- SYSTEM DEPENDENCIES ---
+      - name: Install System Dependencies (Linux)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+      # --- ENVIRONMENT SETUP ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache Rust Dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install Frontend Dependencies
+        run: npm install
+
+      # --- VERIFICATION ---
+      - name: Check Code Validity
+        run: cargo check
+
+      - name: Lint Code (Clippy)
+        run: cargo clippy -- -D warnings
+
+      - name: Run Tests
+        run: cargo test
+
+      # --- BUILD ---
+      - name: Build Application (Debug)
+        run: npm run tauri build -- --debug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.platform }}
+          path: |
+            src-tauri/target/debug/bundle/deb/*.deb
+            src-tauri/target/debug/bundle/appimage/*.AppImage
+            src-tauri/target/debug/bundle/msi/*.msi
+            src-tauri/target/debug/bundle/nsis/*.exe
+            src-tauri/target/debug/bundle/dmg/*.dmg
+            src-tauri/target/debug/bundle/macos/*.app
+          retention-days: 5
