@@ -1,0 +1,1 @@
+- [ShadowHost-Architektur](project_architecture.md) — Multi-Server Tauri-Manager mit Docker (Pelican-Stil), itzg/minecraft-server als Standard-Image
